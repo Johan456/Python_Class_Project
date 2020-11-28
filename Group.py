@@ -1,7 +1,7 @@
 import re
-import sys
 
 from GroupService import GroupService
+from Professor import Professor
 
 
 class Group:
@@ -17,7 +17,10 @@ class Group:
         return self.__professor
 
     def set_professor(self, professor):
-        self.__professor = professor
+        if isinstance(professor, Professor):
+            self.__professor = professor
+        else:
+            self.__professor = None
 
     def get_title(self):
         return self.__title

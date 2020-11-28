@@ -9,31 +9,30 @@ import re
 def read_classes_from_file():
     global title, group
     classes_dict = {}
-    # fileInput = input("Enter the name of the file you want to read the classes info from:")
-    # path = fileInput + ".csv"
-    if os.path.isfile("classes_data.csv"):
-        file = open("classes_data.csv")
+    fileInput = input("Enter the name of the file you want to read the classes info from:")
+    path = fileInput + ".csv"
+    if os.path.isfile(path):
+        file = open(path)
         reader = csv.reader(file)
         for line in reader:
             title = str(line[0])
             credit = int(line[1])
             group = Group(title, credit)
             classes_dict[title] = group
+        return classes_dict
 
     else:
         print('No such file!')
-
-    return classes_dict
 
 
 def read_students_from_file(classes_dict):
     global first, student
     students_dict = {}
-    # fileInput = input("Enter the name of the file you want to read the student info from:")
-    # path = fileInput + ".csv"
-    file = open("student_data.csv")
-    reader = csv.reader(file)
-    if os.path.isfile("student_data.csv"):
+    fileInput = input("Enter the name of the file you want to read the student info from:")
+    path = fileInput + ".csv"
+    if os.path.isfile(path):
+        file = open(path)
+        reader = csv.reader(file)
         for line in reader:
             first = str(line[0])
             last = str(line[1])
@@ -58,11 +57,11 @@ def read_students_from_file(classes_dict):
 
 def read_professors_from_file(classes_dict):
     all_teachers = []
-    # fileInput = input("Enter the name of the file you want to read the professors info from:")
-    # path = fileInput + ".csv"
-    file = open("professor_data.csv")
-    reader = csv.reader(file)
-    if os.path.isfile("professor_data.csv"):
+    fileInput = input("Enter the name of the file you want to read the professors info from:")
+    path = fileInput + ".csv"
+    if os.path.isfile(path):
+        file = open(path)
+        reader = csv.reader(file)
         for line in reader:
             first = str(line[0])
             last = str(line[1])
@@ -118,7 +117,8 @@ def get_classes_of_students(students_dict):
                 for index, key in enumerate(students_dict):
                     if index == int(number):
                         print("{}'s classes: ".format(key))
-                        students_dict[key].print_classes()
+                        for group in students_dict[key].get_classes():
+                            print(group.get_title())
         except IndexError:
             print(print("Please enter a valid value!"))
     else:
@@ -129,7 +129,8 @@ def get_classes_of_students(students_dict):
                 if int(answer) == 1:
                     for name, st in students_dict.items():
                         print("{}'s classes: ".format(name))
-                        st.print_classes()
+                        for group in st.get_classes():
+                            print(group.get_title())
                         toggle = False
                 elif int(answer) == 0:
                     toggle = False
@@ -156,27 +157,31 @@ def main():
         print("2 - List all the classes and the students enrolled in them")
         print("3 - Search students by their name/surname")
         print("4 - Exit")
-        option = int(input("Choose an option: "))
-        if option == 1:
-            for prof in professors:
-                print("---------------------")
-                print(prof.get_first())
-                prof.list_classes_teaching()
-        elif option == 2:
-            for title1, group1 in classes_dict.items():
-                print(group1.get_title())
-                group1.list_all_students()
-        elif option == 3:
-            result_dict = search_students(students_dict)
-            toggle2 = True
-            while toggle2:
-                if not bool(result_dict):
-                    toggle2 = False
-                else:
-                    get_classes_of_students(result_dict)
-                    toggle2 = False
-        elif option == 4:
-            toggle = False
+        try:
+            option = int(input("Choose an option: "))
+            if option == 1:
+                for prof in professors:
+                    print("---------------------")
+                    print(prof.get_first())
+                    prof.list_classes_teaching()
+            elif option == 2:
+                for title1, group1 in classes_dict.items():
+                    print("---------------------")
+                    print(group1.get_title())
+                    group1.list_all_students()
+            elif option == 3:
+                result_dict = search_students(students_dict)
+                toggle2 = True
+                while toggle2:
+                    if not bool(result_dict):
+                        toggle2 = False
+                    else:
+                        get_classes_of_students(result_dict)
+                        toggle2 = False
+            elif option == 4:
+                toggle = False
+        except ValueError:
+            print("Please enter a valid value!")
 
 
 if __name__ == "__main__":
